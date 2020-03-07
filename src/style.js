@@ -67,7 +67,7 @@ injectGlobal`
       width: 402px;
 
       .rows {
-        height: 405px;
+        min-height: 405px;
       }
     }
   }
