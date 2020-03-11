@@ -4,14 +4,20 @@ import OrderRow from '../OrderRow';
 function OrderSide(props: any) {
 
   const { tradeEvent, size, type, reset } = props;
-  const [events, setEvents] = useState<Array<any>>([]);
+
+  let [xchgMap, setXchgMap] = useState<any>({});
+  let [events, setEvents] = useState<Array<any>>([]);
 
   useEffect(() => {
     if (tradeEvent.price1) {
-      events.push({
+
+      // Keep events by exchange name so there is no duplicates
+      xchgMap[tradeEvent.xchg1] = {
         tradeEvent,
-        comp: <OrderRow key={tradeEvent.id} tradeEvent={tradeEvent} type={type} /> 
-      })
+        comp: <OrderRow key={tradeEvent.id} tradeEvent={tradeEvent} type={type} />         
+      }
+
+      events = Object.values(xchgMap);
 
       if (type === 'bid') {
         events.sort((a, b) => b.tradeEvent.price1 - a.tradeEvent.price1);
@@ -27,16 +33,19 @@ function OrderSide(props: any) {
   }, [tradeEvent.id]); 
 
   useEffect(() => {
-    if (reset) setEvents([]);
+    if (reset) {
+      setEvents([]);
+      setXchgMap({});
+    }
   }, [reset]);
 
   const groupPrices = (events: Array<any>) => {
-    interface Indexable {
+    interface PricesMap {
       [key: string]: number;
     }
 
     let group = 1;
-    const pricesMap: Indexable = {};
+    const pricesMap: PricesMap = {};
 
     events.forEach(event => {
       if (!pricesMap[event.tradeEvent.price1]) {
@@ -72,7 +81,9 @@ function OrderSide(props: any) {
         }
 
         </div>
-        {events.map(event => event.comp )}   
+        {
+          events.map(event => event.comp )
+        }   
       </div>
     </div>
   );

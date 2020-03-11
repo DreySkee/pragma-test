@@ -32,12 +32,16 @@ function Dashboard() {
   const start = () => {
     source = new EventSource(api + 'start');
     source.onmessage = (e: any) => {
-      let { event } = JSON.parse(e.data);
-      event = convertToObj(event);
-      
-      if (event.type === 'Ask') setAsk(event);
-      if (event.type === 'Bid') setBid(event);
-      setEvent(event)
+      if (e.data && !e.data.includes('stop streaming at event')) {
+        let { event } = JSON.parse(e.data);
+        event = convertToObj(event);
+        
+        if (event.type === 'Ask') setAsk(event);
+        if (event.type === 'Bid') setBid(event);
+        setEvent(event)
+      } else {
+        stop();  
+      }
     };    
 
     setIsPlaying(true);
@@ -58,15 +62,7 @@ function Dashboard() {
 
   const setSpeed = (speed: number) => {
     sendRequest('set?speed=' + speed);   
-    source = new EventSource(api + 'start');
-    source.onmessage = (e: any) => {
-      let { event } = JSON.parse(e.data);
-      event = convertToObj(event);
-      
-      if (event.type === 'Ask') setAsk(event);
-      if (event.type === 'Bid') setBid(event);
-      setEvent(event)
-    }; 
+    setIsPlaying(false);
   }
 
   const convertToObj = (eventArr: Array<any>) => {
@@ -88,9 +84,9 @@ function Dashboard() {
     <div className="dashboard">
       <div className="controls">
         {isPlaying ?
-          <span onClick={stop}>Stop</span> 
+          <span className="stop-btn" onClick={stop}>Stop</span> 
           :
-          <span onClick={start}>Start</span> 
+          <span className="start-btn" onClick={start}>Start</span> 
         }
         <span onClick={reset}>Reset</span>  
         &nbsp;&nbsp;Speed: &nbsp;
@@ -104,7 +100,7 @@ function Dashboard() {
         <span onClick={() => setSpeed(20)}>20x</span>  
       </div> 
       <OrderEvent event={event} /> 
-      <OrderTable nextBid={bid} nextAsk={ask} size={14} reset={resetTable} />
+      <OrderTable nextBid={bid} nextAsk={ask} size={13} reset={resetTable} />
     </div>
   );
 }

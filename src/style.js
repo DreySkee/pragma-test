@@ -49,6 +49,13 @@ injectGlobal`
       margin-right: 5px;
       cursor: pointer;
       box-shadow: 0 1px 4px 0 rgba(0,0,0,.14);
+
+      &.stop-btn {
+        background: #b72727;
+      }
+      &.start-btn {
+        background: green;
+      }
     }
   }
   
@@ -67,7 +74,7 @@ injectGlobal`
       width: 402px;
 
       .rows {
-        min-height: 405px;
+        min-height: 375px;
       }
     }
   }
@@ -121,6 +128,12 @@ injectGlobal`
     }
     &.color-group-9 {
       background: #484848;
+    }
+    &.color-group-10 {
+      background: #2f2f2f;
+    }
+    &.color-group-11 {
+      background: #2b2828;
     }
   }
 `;
